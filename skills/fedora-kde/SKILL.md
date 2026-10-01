@@ -78,12 +78,18 @@ cp ~/.config/kwinrc ~/.config/kwinrc.bak.$(date +%s)
 ### Reload commands (Wayland + systemd, Fedora)
 
 ```bash
-qdbus6 org.kde.KWin /KWin reconfigure            # re-read kwinrc (falls back to `qdbus`)
+qdbus-qt6 org.kde.KWin /KWin reconfigure         # re-read kwinrc (see note below on qdbus6)
 systemctl --user restart plasma-kwin_wayland     # full KWin restart (logs you through a blink)
-systemctl --user restart plasma-plasmapp         # restart plasmashell (panels, desktop, widgets)
+systemctl --user restart plasma-plasmashell      # restart plasmashell (panels, desktop, widgets)
 systemctl --user restart plasma-kglobalaccel     # after editing kglobalshortcutsrc
 systemctl --user list-units 'plasma-*'           # discover all Plasma user services
 ```
+
+`qdbus6`/`qdbus` are **not installed by default** on Fedora (only
+`qdbus-qt6` is, from `qt6-qttools`). If `qdbus-qt6` is ever missing, call the
+same method with `dbus-send --session --dest=org.kde.KWin /KWin
+org.kde.KWin.reconfigure` or `gdbus`. Note the plasmashell unit is spelled
+`plasma-plasmashell`, not `plasma-plasmapp`.
 
 ### Privilege escalation
 
@@ -117,7 +123,7 @@ cp ~/.config/kwinrc ~/.config/kwinrc.bak.$(date +%s)
 kwriteconfig6 --file kwinrc --group Windows --key BorderSize Huge
 
 # 4. Apply
-qdbus6 org.kde.KWin /KWin reconfigure
+qdbus-qt6 org.kde.KWin /KWin reconfigure
 ```
 
 ### Reset a config to defaults — ALWAYS SEEK USER CONFIRMATION FIRST
@@ -130,9 +136,9 @@ systemctl --user restart plasma-kwin_wayland           # regenerated from defaul
 ### Debugging
 
 ```bash
-journalctl --user -u plasma-plasmapp -b     # plasmashell logs this boot
+journalctl --user -u plasma-plasmashell -b     # plasmashell logs this boot
 journalctl --user -u plasma-kwin_wayland -b # KWin logs
-qdbus6 org.kde.KWin /KWin supportInformation # KWin state dump (show at bug reports)
+qdbus-qt6 org.kde.KWin /KWin supportInformation # KWin state dump (show at bug reports)
 plasmashell --version; kwin_wayland --version
 ```
 

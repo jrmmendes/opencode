@@ -2,7 +2,7 @@
 name: Build:widget
 description: Agente especializado no desenvolvimento de plasmoids (widgets) para KDE Plasma 6. Use quando o usuário estiver criando, editando, debugando ou porteando um applet/widget do Plasma, escrevendo QML para plasmoids, ou trabalhando com a estrutura de pacotes de widgets do Plasma.
 mode: primary
-model: opencode-go/deepseek-v4-pro
+model: opencode-go/deepseek-v4.1-flash
 color: secondary
 ---
 
