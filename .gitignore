@@ -1,0 +1,26 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente e secrets (nunca versionar)
+.env
+.env.*
+!.env.example
+
+# Chaves, certificados e credenciais
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+id_ecdsa*
+*.local
+credentials.json
+secrets.json
+*.secret
+
+# Ruído de SO / editores
+.DS_Store
+Thumbs.db
+*~

@@ -1,0 +1,97 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode-go/qwen3.7-max",
+  "small_model": "opencode-go/deepseek-v4-flash",
+  "permission": {
+    "edit": "allow",
+    "question": "allow",
+    "bash": {
+      "*": "allow",
+      "sudo *": "deny",
+      "su *": "deny",
+      "doas *": "deny",
+      "pkexec *": "deny",
+      "rm -rf /*": "deny",
+      "rm -fr /*": "deny",
+      "rm -rf ~": "deny",
+      "rm -rf ~/*": "deny",
+      "rm -rf --no-preserve-root*": "deny",
+      "dd *": "deny",
+      "mkfs*": "deny",
+      "fdisk*": "deny",
+      "parted*": "deny",
+      "wipefs*": "deny",
+      "shutdown*": "deny",
+      "reboot*": "deny",
+      "poweroff*": "deny",
+      "halt*": "deny",
+      "init 0*": "deny",
+      "systemctl reboot*": "deny",
+      "systemctl poweroff*": "deny",
+      "systemctl halt*": "deny",
+      "chmod -R 777 /*": "deny",
+      "chown -R * /*": "deny",
+      "curl * | sh": "deny",
+      "curl * | bash": "deny",
+      "wget * | sh": "deny",
+      "wget * | bash": "deny"
+    },
+    "external_directory": {
+      "*": "ask",
+      "~/Documentos/**": "allow",
+      "~/Downloads/**": "allow",
+      "~/.config/**": "allow",
+      "~/.local/share/plasma/**": "allow",
+      "/tmp/**": "allow",
+      "~/.ssh/**": "deny",
+      "~/.gnupg/**": "deny",
+      "~/.aws/**": "deny",
+      "~/.kube/**": "deny",
+      "~/.docker/**": "deny",
+      "~/.password-store/**": "deny",
+      "/etc/**": "deny",
+      "/boot/**": "deny",
+      "/sys/**": "deny",
+      "/proc/**": "deny",
+      "/dev/**": "deny",
+      "/root/**": "deny",
+      "/var/**": "deny"
+    }
+  },
+  "agent": {
+    "build": {
+      "model": "opencode-go/deepseek-v4-pro"
+    },
+    "plan": {
+      "model": "opencode-go/glm-5.3",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true
+    },
+    "open-design": {
+      "type": "local",
+      "command": [
+        "{env:OPEN_DESIGN_NODE}",
+        "{env:OPEN_DESIGN_CLI}",
+        "mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "OD_DATA_DIR": "{env:OD_DATA_DIR}",
+        "OD_SIDECAR_IPC_PATH": "{env:OD_SIDECAR_IPC_PATH}"
+      }
+    }
+  },
+  "shell": "/bin/zsh"
+}
