@@ -15,8 +15,9 @@ and permission rules — targeting a Fedora + KDE Plasma 6 workstation.
 
 - `opencode.json` — models, permission rules (bash + external directories), agent
   overrides and MCP servers. `$schema` pinned to `https://opencode.ai/config.json`.
-- `agents/` — one primary agent per file (auto-loaded from
-  `~/.config/opencode/agents/*.md`).
+- `agents/` — one agent per file (auto-loaded from
+  `~/.config/opencode/agents/*.md`). Agents are `mode: all`, so they can be
+  selected with Tab **and** invoked as subagents via the Task tool.
 - `skills/` — on-demand procedures as `SKILL.md` files (`.plans/` consumption and
   Fedora/KDE customization + crash collection).
 - `package.json` + `bun.lock` — `@opencode-ai/plugin` dependency for native custom
@@ -33,12 +34,23 @@ and permission rules — targeting a Fedora + KDE Plasma 6 workstation.
 - **MCP servers**: [Playwright](https://playwright.dev)
   (`npx @playwright/mcp@latest`) and **Open Design** (`open-design`), a local-first
   design workspace for generating/refining HTML, JSX, CSS, SVG and decks.
-- **Agents** (primary): design, harness, widget, debug, linux, interrogatory and
-  plan-zed — see below.
+- **Agents** (`mode: all`): orchestrator, design, harness, widget, debug, linux,
+  interrogatory and plan-zed — see below.
+- **Orchestrator**: delegates to the other agents via Task, in parallel, keeping
+  the main context clean and the output minimal.
+- **Plan gating**: when run as primary, the `Build:*` agents detect inputs that
+  need a plan and ask "Deseja fazer um plano?" via the `question` tool, offering
+  `Plan:zed` / `Plan` / `Plan:interrogatory` / `Não`. `Plan:zed` and `Plan` are
+  dispatched as Task subagents; `Plan:interrogatory` is interactive, so the
+  agent suggest switching to it as the primary agent (Tab / `@interrogatory`).
+  As subagents the `Build:*` agents skip this and just execute.
 - **Skills**: `consume-plans`, `fedora-kde`, `fedora-kde-crash-collector`.
 
 ## AI agents
 
+- [`agents/orchestrator.md`](agents/orchestrator.md) — **Orchestrator**: breaks
+  the request down, dispatches subagents via Task (in parallel when possible) and
+  returns only the synthesis. No edits, no verbose commands.
 - [`agents/design.md`](agents/design.md) — **Build:Design**: orchestrates the
   `open-design` MCP as the primary engine for visual/design work.
 - [`agents/harness.md`](agents/harness.md) — **Build:harness**: edits this very

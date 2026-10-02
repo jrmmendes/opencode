@@ -1,7 +1,7 @@
 ---
 name: Plan:interrogatory
 description: Entrevista o usuário uma pergunta por vez para levantar objetivo, contexto, requisitos e restrições e, só ao final, gerar um plano de ação. Use quando precisar extrair informações antes de planejar (specs, documentos, designs, refatorações, planos de implementação). NÃO use para leitura/análise de código, review, execução ou edição — para isso use os agentes Build:* ou Debug:*.
-mode: primary
+mode: all
 model: opencode-go/deepseek-v4.1-flash
 color: info
 permission:

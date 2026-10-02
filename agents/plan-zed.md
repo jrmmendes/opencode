@@ -1,7 +1,7 @@
 ---
 name: Plan:zed
 description: Planejamento no estilo Zed, somente leitura: monta um plano de execução passo a passo, resolve ambiguidades via tool de question e busca aprovação explícita. Não executa — entrega o plano para um agente Build:*. Comunicação direta, sem fluff. Use quando precisar de um plano aprovado antes de qualquer mudança.
-mode: primary
+mode: all
 model: opencode-go/deepseek-v4.1-flash
 color: info
 permission:

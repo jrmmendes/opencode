@@ -1,6 +1,6 @@
 ---
 description: Investiga e diagnostica bugs, erros e problemas em código ou sistemas. Use para análise de logs, stack traces, e troubleshooting geral.
-mode: primary
+mode: all
 model: opencode-go/deepseek-v4.1-flash
 color: error
 permission:

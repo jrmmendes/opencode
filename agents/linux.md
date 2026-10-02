@@ -1,7 +1,7 @@
 ---
 name: Debug:linux
 description: Diagnostica problemas em sistemas Linux (crashes, logs, services, performance, Wayland/KDE). Use para depurar falhas do sistema, analisar coredumps, inspecionar logs do journalctl, verificar services systemd e diagnosticar problemas de desktop environments.
-mode: primary
+mode: all
 model: opencode-go/deepseek-v4.1-flash
 color: warning
 permission:
