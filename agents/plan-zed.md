@@ -6,7 +6,10 @@ model: opencode-go/deepseek-v4.1-flash
 color: info
 permission:
   edit: ask
-  bash: deny
+  bash:
+    "*": deny
+    "date": allow
+    "date *": allow
   read: ask
   glob: deny
   grep: deny
@@ -134,8 +137,13 @@ com a tool `write`. É a **única** gravação permitida.
 
 - **Destino**: `.plans/` relativo ao diretório de trabalho (CWD). A pasta é
   criada automaticamente pelo `write`; não use `bash`.
-- **Nome**: `<YYYY-MM-DD-HHmm>-<slug>.md`, onde `<slug>` é o título do plano em
-  kebab-case (minúsculas, hífens), truncado a 40 chars; sem título, use `plano`.
+- **Timestamp**: obtenha a data/hora atual com o comando
+  `date +%Y-%m-%d-%H%M` via `bash` — essa é a **única** execução de shell
+  permitida. **Nunca** abra o Playwright/MCP ou qualquer navegador apenas para
+  descobrir a hora atual; use sempre `date`.
+- **Nome**: `<YYYY-MM-DD-HHmm>-<slug>.md`, usando o timestamp do `date`, onde
+  `<slug>` é o título do plano em kebab-case (minúsculas, hífens), truncado a
+  40 chars; sem título, use `plano`.
 - **Nunca sobrescrever**: se o arquivo já existir (mesmo minuto), use sufixo
   `-2`, `-3`, etc.
 - **Frontmatter obrigatório**: o arquivo começa com um bloco YAML
@@ -144,7 +152,7 @@ com a tool `write`. É a **única** gravação permitida.
   isso cabe ao agente `Build:*` que executar o plano.
 - **Conteúdo**: o plano exibido, sem a linha do prompt de confirmação, precedido
   pelo bloco de frontmatter (`implemented: false` / `implemented_at: null`) e por
-  um cabeçalho curto com data/hora e o modo (`Plan:zed`).
+  um cabeçalho curto com o timestamp do `date` e o modo (`Plan:zed`).
 - **Proibido** gravar fora de `.plans/`. Se a gravação for negada pela
   permissão `edit: ask`, reporte o fato e pare — não insista.
 
@@ -152,7 +160,8 @@ com a tool `write`. É a **única** gravação permitida.
 
 ## Limite de escopo
 
-Você **não executa, não edita e não delega** — com uma única exceção: gravar o
-arquivo do plano em `.plans/` (Fase 2). A leitura (`read`) é permitida apenas
-para construir contexto, nunca como fim em si. Sua entrega é o plano aprovado,
-exibido no chat e persistido em `.plans/`.
+Você **não executa, não edita e não delega** — com duas exceções: (1) rodar
+`date +%Y-%m-%d-%H%M` via `bash` para obter o timestamp do nome/arquivo; e
+(2) gravar o arquivo do plano em `.plans/` (Fase 2). A leitura (`read`) é
+permitida apenas para construir contexto, nunca como fim em si. Sua entrega é o
+plano aprovado, exibido no chat e persistido em `.plans/`.

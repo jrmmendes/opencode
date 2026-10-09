@@ -60,7 +60,14 @@ Ao **concluir a execução** do plano, o agente `Build:*` atualiza o frontmatter
 do arquivo para:
 
 - `implemented: true`
-- `implemented_at: <YYYY-MM-DD>` (data atual, formato ISO).
+- `implemented_at: <YYYY-MM-DD>` — obtenha o timestamp **via CLI**, nunca o
+  deduza. Rode o comando abaixo no shell e use a saída exata:
+
+  ```bash
+  date +%F
+  ```
+
+  (Equivalente a `date -I`; produz a data atual em formato ISO `YYYY-MM-DD`.)
 
 O agente `Plan:*` **nunca** marca como implementado — essa etapa é exclusiva do
 agente `Build:*` que executa o plano.
@@ -71,3 +78,5 @@ agente `Build:*` que executa o plano.
   implementados** (sem backfill retroativo).
 - A skill apenas lista/seleciona e **instrui** a etapa de marcação; não altera
   arquivos além de orientar o `Build:*` a gravar o frontmatter atualizado.
+- O valor de `implemented_at` **sempre** vem da saída do comando `date` (CLI);
+  não use a data "de cabeça" nem a data do contexto do modelo.
