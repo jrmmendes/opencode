@@ -1,8 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode-go/qwen3.7-max",
-  "small_model": "opencode-go/deepseek-v4-flash",
-  "default_agent": "Orchestrator",
+  "small_model": "opencode-go/deepseek-v4.1-flash",
+  "default_agent": "orchestrator",
   "permission": {
     "edit": "allow",
     "question": "allow",
@@ -61,7 +61,7 @@
   },
   "agent": {
     "build": {
-      "model": "opencode-go/deepseek-v4-flash"
+      "model": "opencode-go/deepseek-v4.1-flash"
     },
     "plan": {
       "model": "opencode-go/glm-5.3",
@@ -74,23 +74,24 @@
   "mcp": {
     "playwright": {
       "type": "local",
-      "command": [
-        "npx",
-        "@playwright/mcp@latest"
-      ],
+      "command": ["npx", "@playwright/mcp@latest"],
       "enabled": true
     },
     "open-design": {
       "type": "local",
-      "command": [
-        "{env:OPEN_DESIGN_NODE}",
-        "{env:OPEN_DESIGN_CLI}",
-        "mcp"
-      ],
+      "command": ["{env:OPEN_DESIGN_NODE}", "{env:OPEN_DESIGN_CLI}", "mcp"],
       "enabled": true,
       "environment": {
         "OD_DATA_DIR": "{env:OD_DATA_DIR}",
         "OD_SIDECAR_IPC_PATH": "{env:OD_SIDECAR_IPC_PATH}"
+      }
+    },
+    "rea": {
+      "type": "local",
+      "command": ["npx", "-y", "rea-agents@6.4.0", "mcp"],
+      "enabled": true,
+      "environment": {
+        "HOPPER_LAUNCHER_PATH": "/opt/hopper/bin/Hopper"
       }
     }
   },
