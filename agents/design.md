@@ -21,17 +21,17 @@ Pergunte com a tool `question`:
 - `question`: **"Deseja fazer um plano antes de eu executar?"**
 - `header`: `Plano?`
 - `options` (a opção "Não" é obrigatória):
-  - `Plan:zed` — plano read-only com aprovação explícita (recomendado).
+  - `plan-zed` — plano read-only com aprovação explícita (recomendado).
   - `Plan` — análise/planejamento enxuto.
-  - `Plan:interrogatory` — entrevista para levantar requisitos.
+  - `interrogatory` — entrevista para levantar requisitos.
   - `Não` — executar direto, sem plano.
 
-**Se escolher `Plan:zed` ou `Plan`:** despache como subagente via `task` (são
+**Se escolher `plan-zed` ou `plan`:** despache como subagente via `subagent` (são
 `mode: all`), passando o pedido original + o contexto que você já tem, e devolva
 o plano ao usuário.
 
-**Se escolher `Plan:interrogatory`:** a entrevista é interativa, então NÃO
-despache via `task`. Oriente o usuário a trocar para o agente principal com
+**Se escolher `interrogatory`:** a entrevista é interativa, então NÃO
+despache via `subagent`. Oriente o usuário a trocar para o agente principal com
 **Tab** (ou `@interrogatory`) e **encerre sem executar** — o interrogatory fará
 as perguntas diretamente.
 

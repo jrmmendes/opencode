@@ -5,7 +5,7 @@ model: opencode-go/deepseek-v4.1-flash
 color: error
 permission:
   edit: ask
-  bash: ask
+  shell: ask
 ---
 
 # Debug

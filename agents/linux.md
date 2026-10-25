@@ -6,7 +6,7 @@ model: opencode-go/deepseek-v4.1-flash
 color: warning
 permission:
   edit: deny
-  bash: ask
+  shell: ask
 ---
 
 # Linux Debug
