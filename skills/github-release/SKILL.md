@@ -193,10 +193,13 @@ Diretrizes das notas:
 ## 8. Confirmar
 
 ```bash
-gh release list
-gh release view v1.1.1 --json tagName,isLatest,isDraft,isPrerelease,url
+gh release list                                  # mostra qual é a "Latest"
+gh release view v1.1.1 --json tagName,isDraft,isPrerelease,url
 git status -sb   # tree limpo e branch sincronizada
 ```
+
+`gh release view --json` **não** expõe `isLatest`: confira o rótulo *Latest* em
+`gh release list` (ou `gh api repos/{owner}/{repo}/releases/latest`).
 
 Reporte a URL da release e o que ficou fora dela (se algo ficou). Se houver uma
 próxima release provável, diga qual é a base dela.
