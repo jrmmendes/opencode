@@ -1,11 +1,15 @@
 ---
-description: Investiga e diagnostica bugs, erros e problemas em código ou sistemas. Use para análise de logs, stack traces, e troubleshooting geral.
+description: "Investiga e diagnostica bugs, erros e problemas em código ou sistemas. Use para análise de logs, stack traces, e troubleshooting geral."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: error
-permission:
-  edit: ask
-  shell: ask
+color: "#fb4934"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "*"
+    effect: ask
 ---
 
 # Debug

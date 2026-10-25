@@ -14,16 +14,18 @@ KDE Plasma 6 workstation.
 
 ## Structure
 
-- `opencode.json` — models, permission rules (`shell` + external directories),
-  agent overrides and MCP servers. `$schema` pinned to
-  `https://opencode.ai/config.json`; the V1 shapes still load, but new edits use
-  the V2 fields (`permissions`, `agents`, `mcp.servers`).
+- `opencode.json` — models, permission rules (`permissions`), agent overrides
+  (`agents`) and MCP servers (`mcp.servers`). `$schema` pinned to
+  `https://opencode.ai/config.json`. V2 format only; no V1 compatibility.
 - `agents/` — one agent per file (auto-loaded from
-  `~/.config/opencode/agents/*.md`). Most agents are `mode: all`, so they can be
-  selected with Tab **and** invoked as subagents via the `subagent` tool (by ID:
-  `design`, `plan-zed`, `harness`…).
-- `skills/` — on-demand procedures as `SKILL.md` files (`.plans/` consumption and
-  Fedora/KDE customization + crash collection).
+  `~/.config/opencode/agents/*.md`). The ID is the filename; V2 has no `name`
+  label. Most agents are `mode: all`, so they can be selected with Tab **and**
+  invoked as subagents via the `subagent` tool (by ID: `design`, `plan-zed`,
+  `harness`…).
+- `commands/` — slash commands as Markdown templates (auto-loaded from
+  `~/.config/opencode/commands/*.md`), e.g. `/feynman-deepresearch`.
+- `skills/` — on-demand procedures as `SKILL.md` files (`.plans/` consumption,
+  Fedora/KDE customization, research workflows ported from Feynman).
 - `plugins/` — V2 plugins that register custom tools (`@opencode/plugin`):
   `md-preview/` exposes `MDPreview` (wraps the `md-preview` CLI) and
   `terminal-e2e/` exposes `TerminalE2E` (drives interactive programs in a real pty).
@@ -33,9 +35,10 @@ KDE Plasma 6 workstation.
 
 ## Highlights
 
-- **Models**: `opencode-go/qwen3.7-max` (primary) and
-  `opencode-go/deepseek-v4.1-flash` (title/small path and per-agent default),
-  with per-agent overrides.
+- **Models**: `opencode-go/qwen3.7-max` (primary),
+  `opencode-go/deepseek-v4.1-flash` (title path and per-agent default) and
+  `opencode-go/kimi-k2.7-code` (research agent), with per-agent overrides and
+  `#variant` where useful.
 - **Permission hardening**: default-allow `edit`/`question`, a deny-list of
   destructive `shell` patterns (`sudo`, `rm -rf /*`, `dd`, `mkfs`, `shutdown`,
   `curl | sh`, …) and an `external_directory` allow/deny map that blocks
@@ -43,8 +46,9 @@ KDE Plasma 6 workstation.
 - **MCP servers**: [Playwright](https://playwright.dev)
   (`npx @playwright/mcp@latest`) and **Open Design** (`open-design`), a local-first
   design workspace for generating/refining HTML, JSX, CSS, SVG and decks.
-- **Agents** (`mode: all`): orchestrator, design, harness, widget, debug, linux,
-  interrogatory, plan-zed, reverse, doc and ask — see below.
+- **Agents**: orchestrator, design, harness, widget, debug, linux, interrogatory,
+  plan-zed, reverse, doc, ask, lgtv and the research set (feynman + researcher,
+  writer, verifier, reviewer) — see below.
 - **Orchestrator**: delegation-first. It delegates every investigation to
   subagents (`explore` for repo mapping) via `subagent`, in parallel when possible, and
   only reads `.plans/` or a single explicitly-pointed file itself. Playwright,
@@ -61,36 +65,48 @@ KDE Plasma 6 workstation.
   Markdown?" after persisting the plan, and opens it with `MDPreview` (`Sim`).
   The Orchestrator asks the same **by default** whenever `plan-zed`/`interrogatory`
   returns a plan without a preview URL.
+- **Commands**: 11 research workflows under `/feynman-*` (`deepresearch`, `lit`,
+  `review`, `audit`, `replicate`, `recipe`, `compare`, `draft`, `autoresearch`,
+  `summarize`, `log`).
 - **Skills**: `consume-plans`, `review-agent-config`, `fedora-kde`,
-  `fedora-kde-crash-collector`.
+  `fedora-kde-crash-collector` plus the research bundle (`alpha-research`,
+  `deep-research`, `literature-review`, `paper-writing`, `paper-code-audit`,
+  `pdf-explore`, `replication`, `ml-training-recipe`, `source-comparison`,
+  `research-review`, `autoresearch`, `eli5`, `docker`, `preview`, `session-log`,
+  `session-search`).
 - **Markdown preview**: every agent opens Markdown through the `MDPreview` tool
   (wraps `md-preview`), never via `shell`/`xdg-open`. See [Custom tools](#custom-tools).
 
 ## AI agents
 
-- [`agents/orchestrator.md`](agents/orchestrator.md) — **Orchestrator**: breaks
-  the request down, dispatches subagents via Task (in parallel when possible) and
-  returns only the synthesis. No edits, no verbose commands.
-- [`agents/design.md`](agents/design.md) — **design** (label *Build:Design*): orchestrates the
-  `open-design` MCP as the primary engine for visual/design work.
-- [`agents/harness.md`](agents/harness.md) — **harness** (label *Build:harness*): edits this very
-  config (agents, skills, MCP, permissions).
-- [`agents/widget.md`](agents/widget.md) — **widget** (label *Build:widget*): KDE Plasma 6
-  plasmoid/widget development (QML, `metadata.json`, packaging).
-- [`agents/debug.md`](agents/debug.md) — **debug**: general bug/troubleshooting.
-- [`agents/linux.md`](agents/linux.md) — **linux** (label *Debug:linux*): Linux/systemd/KDE/Wayland
-  diagnostics (coredumps, journalctl, services).
-- [`agents/interrogatory.md`](agents/interrogatory.md) — **interrogatory** (label *Plan:interrogatory*):
-  interviews the user one question at a time and emits a plan.
-- [`agents/plan-zed.md`](agents/plan-zed.md) — **plan-zed** (label *Plan:zed*): read-only, Zed-style
-  planning with explicit approval before any change.
-- [`agents/reverse.md`](agents/reverse.md) — **reverse**: reverse engineering of
-  binaries, apps and packages with the `rea` MCP (decompilation, version diffing,
-  artifact-guided reconstruction). Loads the `reverse-engineer-anything` skill.
-- [`agents/doc.md`](agents/doc.md) — **doc**: writes and maintains useful, lean
-  documentation (README, guides, ADRs, API reference, docstrings).
-- [`agents/ask.md`](agents/ask.md) — **ask**: read-only question answering about
-  a codebase, config or system, with `file:line` evidence.
+Agents are addressed by ID (the filename); V2 has no display label.
+
+- `orchestrator` — delegation-first: breaks the request down, dispatches
+  subagents via `subagent` (in parallel when possible) and returns only the
+  synthesis. No edits, no verbose commands.
+- `design` — orchestrates the `open-design` MCP as the primary engine for
+  visual/design work.
+- `harness` — edits this very config (agents, skills, commands, MCP, permissions).
+- `widget` — KDE Plasma 6 plasmoid/widget development (QML, `metadata.json`,
+  packaging).
+- `debug` — general bug/troubleshooting.
+- `linux` — Linux/systemd/KDE/Wayland diagnostics (coredumps, journalctl,
+  services).
+- `interrogatory` — interviews the user one question at a time and emits a plan.
+- `plan-zed` — read-only, Zed-style planning with explicit approval before any
+  change.
+- `reverse` — reverse engineering of binaries, apps and packages with the `rea`
+  MCP (decompilation, version diffing, artifact-guided reconstruction). Loads the
+  `reverse-engineer-anything` skill.
+- `doc` — writes and maintains useful, lean documentation (README, guides, ADRs,
+  API reference, docstrings).
+- `ask` — read-only question answering about a codebase, config or system, with
+  `file:line` evidence.
+- `lgtv` — LG webOS TV control (multi-TV) via the `lgtv-*` skills.
+- `feynman` — research-first primary agent ported from Feynman (Pi): evidence
+  discipline, `<slug>/` artifact layout, delegates to the research subagents.
+- `researcher`, `writer`, `verifier`, `reviewer` — research subagents used by
+  `feynman` (evidence gathering, drafting, citation verification, critique).
 
 ## Custom tools
 

@@ -1,12 +1,15 @@
 ---
-name: Doc
-description: Escreve e mantém documentação útil e enxuta (README, guias, ADRs, referência de API, docstrings, changelogs). Use quando o usuário pedir para documentar código, escrever/atualizar um README ou guia, ou explicar um sistema por escrito. Não use para responder perguntas (use Ask) nem para implementar features (use `build` ou um especialista).
+description: "Escreve e mantém documentação útil e enxuta (README, guias, ADRs, referência de API, docstrings, changelogs). Use quando o usuário pedir para documentar código, escrever/atualizar um README ou guia, ou explicar um sistema por escrito. Não use para responder perguntas (use Ask) nem para implementar features (use `build` ou um especialista)."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: success
-permission:
-  edit: allow
-  shell: ask
+color: "#b8bb26"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: ask
 ---
 
 # Doc — Documentação útil

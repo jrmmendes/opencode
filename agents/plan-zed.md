@@ -1,23 +1,45 @@
 ---
-name: Plan:zed
 description: "Planejamento no estilo Zed, somente leitura: monta um plano de execução passo a passo, resolve ambiguidades via tool de question e busca aprovação explícita. Não executa — entrega o plano para um agente executor (`build` ou especialista). Comunicação direta, sem fluff. Use quando precisar de um plano aprovado antes de qualquer mudança."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: info
-permission:
-  edit: ask
-  shell:
-    "*": deny
-    "date": allow
-    "date *": allow
-  read: ask
-  glob: deny
-  grep: deny
-  subagent: deny
-  webfetch: allow
-  websearch: allow
-  skill: deny
-  question: allow
+color: "#83a598"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "date"
+    effect: allow
+  - action: shell
+    resource: "date *"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: ask
+  - action: glob
+    resource: "*"
+    effect: deny
+  - action: grep
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: websearch
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: question
+    resource: "*"
+    effect: allow
 ---
 
 # plan-zed — Planejamento com Aprovação (estilo Zed)

@@ -1,99 +1,316 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "shell": "/bin/zsh",
   "model": "opencode-go/qwen3.7-max",
-  "small_model": "opencode-go/deepseek-v4.1-flash",
   "default_agent": "orchestrator",
-  "permission": {
-    "edit": "allow",
-    "question": "allow",
-    "bash": {
-      "*": "allow",
-      "sudo *": "deny",
-      "su *": "deny",
-      "doas *": "deny",
-      "pkexec *": "deny",
-      "rm -rf /*": "deny",
-      "rm -fr /*": "deny",
-      "rm -rf ~": "deny",
-      "rm -rf ~/*": "deny",
-      "rm -rf --no-preserve-root*": "deny",
-      "dd *": "deny",
-      "mkfs*": "deny",
-      "fdisk*": "deny",
-      "parted*": "deny",
-      "wipefs*": "deny",
-      "shutdown*": "deny",
-      "reboot*": "deny",
-      "poweroff*": "deny",
-      "halt*": "deny",
-      "init 0*": "deny",
-      "systemctl reboot*": "deny",
-      "systemctl poweroff*": "deny",
-      "systemctl halt*": "deny",
-      "chmod -R 777 /*": "deny",
-      "chown -R * /*": "deny",
-      "curl * | sh": "deny",
-      "curl * | bash": "deny",
-      "wget * | sh": "deny",
-      "wget * | bash": "deny"
+  "permissions": [
+    {
+      "action": "edit",
+      "resource": "*",
+      "effect": "allow"
     },
-    "external_directory": {
-      "*": "ask",
-      "~/Documentos/**": "allow",
-      "~/Downloads/**": "allow",
-      "~/.config/**": "allow",
-      "~/.local/share/plasma/**": "allow",
-      "/tmp/**": "allow",
-      "~/.ssh/**": "deny",
-      "~/.gnupg/**": "deny",
-      "~/.aws/**": "deny",
-      "~/.kube/**": "deny",
-      "~/.docker/**": "deny",
-      "~/.password-store/**": "deny",
-      "/etc/**": "deny",
-      "/boot/**": "deny",
-      "/sys/**": "deny",
-      "/proc/**": "deny",
-      "/dev/**": "deny",
-      "/root/**": "deny",
-      "/var/**": "deny"
+    {
+      "action": "question",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "sudo *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "su *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "doas *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "pkexec *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -rf /*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -fr /*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -rf ~",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -rf ~/*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "rm -rf --no-preserve-root*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "dd *",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "mkfs*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "fdisk*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "parted*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "wipefs*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "shutdown*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "reboot*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "poweroff*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "halt*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "init 0*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "systemctl reboot*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "systemctl poweroff*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "systemctl halt*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "chmod -R 777 /*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "chown -R * /*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "curl * | sh",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "curl * | bash",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "wget * | sh",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "wget * | bash",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/Documentos/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/Downloads/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.config/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.local/share/plasma/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/tmp/**",
+      "effect": "allow"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.ssh/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.gnupg/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.aws/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.kube/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.docker/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "~/.password-store/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/etc/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/boot/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/sys/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/proc/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/dev/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/root/**",
+      "effect": "deny"
+    },
+    {
+      "action": "external_directory",
+      "resource": "/var/**",
+      "effect": "deny"
     }
-  },
-  "agent": {
+  ],
+  "agents": {
     "build": {
       "model": "opencode-go/deepseek-v4.1-flash"
     },
     "plan": {
       "model": "opencode-go/glm-5.3",
-      "permission": {
-        "edit": "deny",
-        "bash": "ask"
-      }
+      "permissions": [
+        {
+          "action": "edit",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "shell",
+          "resource": "*",
+          "effect": "ask"
+        }
+      ]
+    },
+    "title": {
+      "model": "opencode-go/deepseek-v4.1-flash"
     }
   },
   "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
-    },
-    "open-design": {
-      "type": "local",
-      "command": ["{env:OPEN_DESIGN_NODE}", "{env:OPEN_DESIGN_CLI}", "mcp"],
-      "enabled": true,
-      "environment": {
-        "OD_DATA_DIR": "{env:OD_DATA_DIR}",
-        "OD_SIDECAR_IPC_PATH": "{env:OD_SIDECAR_IPC_PATH}"
-      }
-    },
-    "rea": {
-      "type": "local",
-      "command": ["npx", "-y", "rea-agents@6.4.0", "mcp"],
-      "enabled": true,
-      "environment": {
-        "HOPPER_LAUNCHER_PATH": "/opt/hopper/bin/Hopper"
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": [
+          "npx",
+          "@playwright/mcp@latest"
+        ]
+      },
+      "open-design": {
+        "type": "local",
+        "command": [
+          "{env:OPEN_DESIGN_NODE}",
+          "{env:OPEN_DESIGN_CLI}",
+          "mcp"
+        ],
+        "environment": {
+          "OD_DATA_DIR": "{env:OD_DATA_DIR}",
+          "OD_SIDECAR_IPC_PATH": "{env:OD_SIDECAR_IPC_PATH}"
+        }
+      },
+      "rea": {
+        "type": "local",
+        "command": [
+          "npx",
+          "-y",
+          "rea-agents@6.4.0",
+          "mcp"
+        ],
+        "environment": {
+          "HOPPER_LAUNCHER_PATH": "/opt/hopper/bin/Hopper"
+        }
       }
     }
-  },
-  "shell": "/bin/zsh"
+  }
 }

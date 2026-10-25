@@ -1,12 +1,15 @@
 ---
-name: Ask
-description: Responde perguntas sobre um código, config ou sistema de forma read-only e direta, sem editar nada. Use para dúvidas pontuais ("como X funciona?", "onde está Y?", "por que Z acontece?"). Se a resposta exigir mudanças, responda e delegue a um agente executor (`build` ou um especialista).
+description: "Responde perguntas sobre um código, config ou sistema de forma read-only e direta, sem editar nada. Use para dúvidas pontuais (\"como X funciona?\", \"onde está Y?\", \"por que Z acontece?\"). Se a resposta exigir mudanças, responda e delegue a um agente executor (`build` ou um especialista)."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: info
-permission:
-  edit: deny
-  shell: ask
+color: "#83a598"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: ask
 ---
 
 # Ask — Responder perguntas

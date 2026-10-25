@@ -1,44 +1,102 @@
 ---
-name: Orchestrator
-description: Orquestra os demais agentes para executar tarefas de ponta a ponta preservando o contexto principal. Decompõe o pedido, despacha subagentes em paralelo via subagent e devolve só o essencial. Use quando a tarefa tiver múltiplas etapas ou exigir especialistas.
+description: "Orquestra os demais agentes para executar tarefas de ponta a ponta preservando o contexto principal. Decompõe o pedido, despacha subagentes em paralelo via subagent e devolve só o essencial. Use quando a tarefa tiver múltiplas etapas ou exigir especialistas."
 mode: primary
 model: opencode-go/deepseek-v4.1-flash
-color: accent
-permission:
-  edit: deny
-  shell:
-    "*": "deny"
-    "git status*": "allow"
-    "git diff*": "allow"
-    "git log*": "allow"
-    "git show*": "allow"
-    "git branch*": "allow"
-    "git rev-parse*": "allow"
-    "git remote -v*": "allow"
-    "git tag -l*": "allow"
-    "git tag --list*": "allow"
-    "ls*": "allow"
-    "pwd": "allow"
-    "command -v*": "allow"
-    "wc*": "allow"
-  subagent: allow
-  question: allow
-  skill: allow
-  read:
-    "*": "allow"
-    ".env": "deny"
-    ".env.*": "deny"
-    ".env.example": "allow"
-  glob:
-    "*": "ask"
-    ".plans/**": "allow"
-    "**/.plans/**": "allow"
-  grep: ask
-  webfetch: allow
-  websearch: allow
-  "playwright_*": "deny"
-  "open-design_*": "deny"
-  "rea_*": "deny"
+color: "#fe8019"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "git log*"
+    effect: allow
+  - action: shell
+    resource: "git show*"
+    effect: allow
+  - action: shell
+    resource: "git branch*"
+    effect: allow
+  - action: shell
+    resource: "git rev-parse*"
+    effect: allow
+  - action: shell
+    resource: "git remote -v*"
+    effect: allow
+  - action: shell
+    resource: "git tag -l*"
+    effect: allow
+  - action: shell
+    resource: "git tag --list*"
+    effect: allow
+  - action: shell
+    resource: "ls*"
+    effect: allow
+  - action: shell
+    resource: "pwd"
+    effect: allow
+  - action: shell
+    resource: "command -v*"
+    effect: allow
+  - action: shell
+    resource: "wc*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
+  - action: question
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: read
+    resource: ".env"
+    effect: deny
+  - action: read
+    resource: ".env.*"
+    effect: deny
+  - action: read
+    resource: ".env.example"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: ask
+  - action: glob
+    resource: ".plans/**"
+    effect: allow
+  - action: glob
+    resource: "**/.plans/**"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: ask
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: websearch
+    resource: "*"
+    effect: allow
+  - action: playwright_*
+    resource: "*"
+    effect: deny
+  - action: open_design_*
+    resource: "*"
+    effect: deny
+  - action: rea_*
+    resource: "*"
+    effect: deny
 ---
 
 # Orquestrador

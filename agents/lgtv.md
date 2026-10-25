@@ -1,15 +1,12 @@
 ---
-name: LGTV
-description: >
-  Agente operacional para TVs LG webOS na rede local (multi-TV): conectar/escolher a TV,
-  ligar/desligar (Wake-on-LAN), volume, mudo, entradas HDMI, abrir/fechar apps, canais,
-  botoes do controle e ponteiro/touchpad (Magic Remote). Use as skills globais
-  lgtv-connect, lgtv-discover, lgtv-power, lgtv-media e lgtv-remote.
+description: "Agente operacional para TVs LG webOS na rede local (multi-TV): conectar/escolher a TV, ligar/desligar (Wake-on-LAN), volume, mudo, entradas HDMI, abrir/fechar apps, canais, botoes do controle e ponteiro/touchpad (Magic Remote). Use as skills globais lgtv-connect, lgtv-discover, lgtv-power, lgtv-media e lgtv-remote.\n"
 mode: primary
 model: opencode-go/deepseek-v4.1-flash
-color: primary
-permission:
-  edit: deny
+color: "#d3869b"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 # LGTV — Controle de TV LG webOS (multi-TV)

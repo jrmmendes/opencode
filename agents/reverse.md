@@ -1,12 +1,15 @@
 ---
-name: Reverse
-description: Engenharia reversa de binários, apps, pacotes e runtimes com o MCP REA. Use para entender features, comparar versões, decompilar código ou reconstruir comportamento a partir de um artefato distribuído (ELF/PE/Mach-O, APK/IPA/MSIX, ASAR/Electron, firmware, captura web, EVM). Não use para análise comum de um repositório cujo código-fonte está disponível.
+description: "Engenharia reversa de binários, apps, pacotes e runtimes com o MCP REA. Use para entender features, comparar versões, decompilar código ou reconstruir comportamento a partir de um artefato distribuído (ELF/PE/Mach-O, APK/IPA/MSIX, ASAR/Electron, firmware, captura web, EVM). Não use para análise comum de um repositório cujo código-fonte está disponível."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: secondary
-permission:
-  edit: ask
-  shell: ask
+color: "#8ec07c"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "*"
+    effect: ask
 ---
 
 # Reverse — Engenharia Reversa com REA

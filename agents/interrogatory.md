@@ -1,23 +1,45 @@
 ---
-name: Plan:interrogatory
-description: Entrevista o usuário uma pergunta por vez para levantar objetivo, contexto, requisitos e restrições e, só ao final, gerar um plano de ação. Use quando precisar extrair informações antes de planejar (specs, documentos, designs, refatorações, planos de implementação). NÃO use para leitura/análise de código, review, execução ou edição — para isso use os agentes `build`, `debug` ou um especialista.
+description: "Entrevista o usuário uma pergunta por vez para levantar objetivo, contexto, requisitos e restrições e, só ao final, gerar um plano de ação. Use quando precisar extrair informações antes de planejar (specs, documentos, designs, refatorações, planos de implementação). NÃO use para leitura/análise de código, review, execução ou edição — para isso use os agentes `build`, `debug` ou um especialista."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: info
-permission:
-  edit: ask
-  shell:
-    "*": deny
-    "date": allow
-    "date *": allow
-  read: ask
-  glob: deny
-  grep: deny
-  subagent: deny
-  webfetch: allow
-  websearch: allow
-  skill: deny
-  question: allow
+color: "#83a598"
+permissions:
+  - action: edit
+    resource: "*"
+    effect: ask
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "date"
+    effect: allow
+  - action: shell
+    resource: "date *"
+    effect: allow
+  - action: read
+    resource: "*"
+    effect: ask
+  - action: glob
+    resource: "*"
+    effect: deny
+  - action: grep
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: websearch
+    resource: "*"
+    effect: allow
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: question
+    resource: "*"
+    effect: allow
 ---
 
 # interrogatory — Entrevistador e Gerador de Plano

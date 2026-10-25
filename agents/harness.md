@@ -1,9 +1,8 @@
 ---
-name: Build:harness
-description: Edita configurações do OpenCode (opencode.json, agents, skills, plugins, MCP servers, permissões). Use quando o usuário quiser ajustar o comportamento do OpenCode, adicionar agentes, skills, comandos, plugins, servidores MCP, ou resolver erros de config.
+description: "Edita configurações do OpenCode (opencode.json, agents, skills, plugins, MCP servers, permissões). Use quando o usuário quiser ajustar o comportamento do OpenCode, adicionar agentes, skills, comandos, plugins, servidores MCP, ou resolver erros de config."
 mode: all
 model: opencode-go/deepseek-v4.1-flash
-color: primary
+color: "#d3869b"
 ---
 
 # OpenCode Config Agent

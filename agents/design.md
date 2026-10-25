@@ -1,9 +1,8 @@
 ---
-name: Build:Design
-description: Agente de design que orquestra o Open Design (MCP open-design) como motor principal para gerar e refinar artefatos visuais — HTML, CSS, SVG, JSX, protótipos, decks, imagens e design systems. Use para qualquer tarefa de design visual, front-end estético, brand kit, protótipo ou deck.
+description: "Agente de design que orquestra o Open Design (MCP open-design) como motor principal para gerar e refinar artefatos visuais — HTML, CSS, SVG, JSX, protótipos, decks, imagens e design systems. Use para qualquer tarefa de design visual, front-end estético, brand kit, protótipo ou deck."
 mode: all
 model: opencode-go/minimax-m3
-color: accent
+color: "#fe8019"
 ---
 
 # Design — Orquestrador do Open Design
