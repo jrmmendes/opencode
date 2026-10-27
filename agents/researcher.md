@@ -88,8 +88,6 @@ For each candidate recipe, capture:
 
 Rank recipe candidates by practical feasibility and result quality. Do not describe a dataset as usable unless you directly checked availability and format, or clearly mark that check as missing.
 
-Use `webfetch` on `https://huggingface.co/api/datasets/<id>` for dataset cards, features, splits, tags, and access status, and on `https://huggingface.co/api/models/<id>/tree/<path>` to list Hub repo files. Read only small text files (README, configs, examples, scripts) through their raw URLs.
-
 ### Evidence table
 
 | # | Source | URL | Key claim | Type | Confidence |

@@ -147,9 +147,9 @@ Adaptações obrigatórias no corpo:
 2. **Tools**: `bash`→`shell`, `web_search`→`websearch`,
    `fetch_content`→`webfetch`, `find`/`ls`→`glob`.
 3. **alphaXiv**: manter `feynman alpha …` via `shell` (CLI presente e logado).
-4. **Science databases / Hugging Face**: remover `feynman_science_database_search`
-   e `hf_*` do texto; apontar para o skill `science-databases` (fase 2) ou
-   `webfetch` nas APIs públicas, marcando `Blocked` quando indisponível.
+4. **Science databases**: remover `feynman_science_database_search` do texto e
+   apontar para `webfetch` nas APIs públicas, marcando `Blocked` quando
+   indisponível.
 5. **Documentos**: `document_parse` → `read` (PDF) + skill `preview` (pandoc).
 6. **Artefatos**: manter a regra de um artefato canônico por workflow, agora sob
    `<slug>/`, com `mkdir -p` antes de escrever e verificação de
@@ -172,12 +172,11 @@ Transformações nos corpos:
 
 - Remover `thinking`, `defaultProgress`, `async`, `tools:` do frontmatter V1;
   restringir tools via `permission`.
-- `researcher`: remover `hf_*` e `feynman_science_database_search`; trocar a
+- `researcher`: remover `feynman_science_database_search`; trocar a
   tabela de roteamento por `webfetch` nas APIs (arXiv, OpenAlex, PubMed, Europe
   PMC, Crossref, Semantic Scholar) + `feynman alpha` quando disponível.
-- `verifier`: o cross-check “dois índices” vira `webfetch` (arXiv/Crossref) ou a
-  skill `science-databases`; manter a regra de não usar `verified/confirmed` sem
-  evidência.
+- `verifier`: o cross-check “dois índices” vira `webfetch` (arXiv/Crossref);
+  manter a regra de não usar `verified/confirmed` sem evidência.
 - `writer`: manter “não adicionar citações nem Sources” (o verifier faz isso).
 - `reviewer`: manter IDs `[W1]`/`[Q1]` e anotações inline.
 
@@ -256,33 +255,56 @@ opencode api get /api/config  # checar warnings de frontmatter
   `feynman alpha status` acessível pelo agente.
 - Não reiniciar o OpenCode; `/reload` se o agente não aparecer.
 
-## Fase 2 — Ferramentas ausentes (plugin)
+## Fase 2 — Plugins pendentes
 
-1. Plugin `plugins/science-db/index.ts` (`@opencode/plugin`):
-   - tool `ScienceSearch` com `source: arxiv|openalex|semanticscholar|pubmed|
-     europepmc|crossref`;
-   - reusar endpoints/parsers de
-     `$PKG/extensions/research-tools/science-database-*.ts` (portar para
-     `fetch`, sem telemetria);
-   - documentar rate limit e `OPENALEX_API_KEY`/`SEMANTIC_SCHOLAR_API_KEY`.
-2. Tool `HfRepo` (dataset info, files, read) via API pública do Hugging Face.
-3. Atualizar `researcher.md`/`verifier.md` e o skill `science-databases` (novo)
-   para usar essas tools e remover o fallback `webfetch`.
-4. PDF/documentos: avaliar MCP de PDF se `read` + `pdftotext` forem insuficientes.
+### 2.1 Hugging Face — `plugins/hf/index.ts`
 
-## Fase 3 — Memória e sessões
+Plugin (`@opencode/plugin`) expondo as três tools do
+Feynman com os **mesmos nomes**, para os prompts originais poderem voltar a
+apontar para elas sem reescrita:
 
-1. Memória persistente equivalente a `pi-memory`/`hindsight`: plugin com store
-   local (SQLite/JSON em `~/.local/share/opencode/…`) + tool de busca; injetar
-   resumo no início da sessão via hook.
-2. `session-search` nativo: consultar o banco de sessões do OpenCode em vez de
-   `~/.feynman/sessions/`.
+- `hf_dataset_info` — `GET https://huggingface.co/api/datasets/{id}`; devolve
+  id/author/sha/lastModified, `private`/`gated`/`disabled`, downloads/likes,
+  tags, `cardData`, `dataset_info` (features/splits), `siblings` e URL.
+- `hf_repo_files` — `GET /api/{models|datasets|spaces}/{id}/tree/{rev}/{path}?recursive=`;
+  `limit` default 200 (máx. 1000), com `count`/`truncated`.
+- `hf_repo_read_file` — `GET /{prefix}{id}/resolve/{rev}/{path}`; texto com
+  default 20k chars (máx. 60k), retornando `contentType` e `truncated`.
+
+Requisitos de implementação:
+
+- Auth opcional por `HF_TOKEN` ou `HUGGINGFACE_HUB_TOKEN` (header
+  `Authorization: Bearer`); sem token continua funcionando anônimo, mas repos
+  gated/private exigem token.
+- Recusar extensões binárias/pesos (`.safetensors`, `.bin`, `.pt`, `.pth`,
+  `.ckpt`, `.gguf`, `.onnx`, `.h5`, `.joblib`, `.ot`, `.parquet`, `.zip`,
+  `.tar`, `.tgz`, `.7z`), como no original.
+- Reusar a lógica de
+  `$PKG/extensions/research-tools/huggingface.ts` (encode de repo id,
+  truncamento, clamp de limites), portada para `fetch` e sem telemetria.
+- `input` em JSON Schema; `execute` retorna `{ content }`.
+- Fora desta fase: reescrever `researcher`/`feynman-recipe`; hoje eles usam
+  `webfetch` e não citam Hugging Face.
+
+### 2.2 Science databases — `plugins/science-db/index.ts`
+
+Plugin (`@opencode/plugin`) com a tool `ScienceSearch`:
+
+- `source: arxiv|openalex|semanticscholar|pubmed|europepmc|crossref` (e
+  `source: openalex` com `semantic:`/`openalex_citations:` quando útil);
+- reusar endpoints/parsers de
+  `$PKG/extensions/research-tools/science-database-*.ts` (portar para `fetch`,
+  sem telemetria);
+- documentar rate limit e suporte a `OPENALEX_API_KEY` /
+  `SEMANTIC_SCHOLAR_API_KEY`;
+- `input` em JSON Schema; `execute` retorna `{ content }`;
+- fora desta fase: reescrever `researcher`/`verifier`; hoje eles usam
+  `webfetch` nas APIs públicas.
 
 ## Fora de escopo
 
 - `missions`/`fleetView`, tema `feynman`, keybindings do Pi, telemetria PostHog,
   `/init` e `/outputs` do Feynman.
-- Migração global de todos os agentes de V1 para V2.
 
 ## Status de implementação (Fase 1)
 
