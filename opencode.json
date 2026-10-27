@@ -257,7 +257,19 @@
   ],
   "agents": {
     "build": {
-      "model": "opencode-go/deepseek-v4.1-flash"
+      "model": "opencode-go/deepseek-v4.1-flash",
+      "permissions": [
+        {
+          "action": "shell",
+          "resource": "rm -rf /tmp/opencode/*",
+          "effect": "allow"
+        },
+        {
+          "action": "shell",
+          "resource": "rm -fr /tmp/opencode/*",
+          "effect": "allow"
+        }
+      ]
     },
     "plan": {
       "model": "opencode-go/glm-5.3",

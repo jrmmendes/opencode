@@ -10,6 +10,122 @@ permissions:
   - action: shell
     resource: "*"
     effect: ask
+  # Reafirma os denies globais: a regra ampla `shell: "*": ask` acima e a
+  # ultima do merge e, sem isto, rebaixaria `sudo`, `rm -rf` etc. para ask.
+  - action: shell
+    resource: "sudo *"
+    effect: deny
+  - action: shell
+    resource: "su *"
+    effect: deny
+  - action: shell
+    resource: "doas *"
+    effect: deny
+  - action: shell
+    resource: "pkexec *"
+    effect: deny
+  - action: shell
+    resource: "rm -rf /*"
+    effect: deny
+  - action: shell
+    resource: "rm -fr /*"
+    effect: deny
+  - action: shell
+    resource: "rm -rf ~"
+    effect: deny
+  - action: shell
+    resource: "rm -rf ~/*"
+    effect: deny
+  - action: shell
+    resource: "rm -rf --no-preserve-root*"
+    effect: deny
+  - action: shell
+    resource: "dd *"
+    effect: deny
+  - action: shell
+    resource: "mkfs*"
+    effect: deny
+  - action: shell
+    resource: "fdisk*"
+    effect: deny
+  - action: shell
+    resource: "parted*"
+    effect: deny
+  - action: shell
+    resource: "wipefs*"
+    effect: deny
+  - action: shell
+    resource: "shutdown*"
+    effect: deny
+  - action: shell
+    resource: "reboot*"
+    effect: deny
+  - action: shell
+    resource: "poweroff*"
+    effect: deny
+  - action: shell
+    resource: "halt*"
+    effect: deny
+  - action: shell
+    resource: "init 0*"
+    effect: deny
+  - action: shell
+    resource: "systemctl reboot*"
+    effect: deny
+  - action: shell
+    resource: "systemctl poweroff*"
+    effect: deny
+  - action: shell
+    resource: "systemctl halt*"
+    effect: deny
+  - action: shell
+    resource: "chmod -R 777 /*"
+    effect: deny
+  - action: shell
+    resource: "chown -R * /*"
+    effect: deny
+  - action: shell
+    resource: "curl * | sh"
+    effect: deny
+  - action: shell
+    resource: "curl * | bash"
+    effect: deny
+  - action: shell
+    resource: "wget * | sh"
+    effect: deny
+  - action: shell
+    resource: "wget * | bash"
+    effect: deny
+  # Diagnóstico de sistema precisa ler /etc, /proc, /sys, /run, /var/log e /dev.
+  # O global nega esses diretórios; estas regras (anexadas depois) liberam só
+  # leitura. `edit: deny` e `shell: ask` continuam valendo.
+  - action: external_directory
+    resource: "/etc/*"
+    effect: allow
+  - action: external_directory
+    resource: "/proc/*"
+    effect: allow
+  - action: external_directory
+    resource: "/sys/*"
+    effect: allow
+  - action: external_directory
+    resource: "/run/*"
+    effect: allow
+  - action: external_directory
+    resource: "/var/log/*"
+    effect: allow
+  - action: external_directory
+    resource: "/var/lib/systemd/coredump/*"
+    effect: allow
+  - action: external_directory
+    resource: "/var/spool/abrt/*"
+    effect: allow
+  - action: external_directory
+    resource: "/var/lib/abrt/*"
+    effect: allow
+  - action: external_directory
+    resource: "/dev/*"
+    effect: allow
 ---
 
 # Linux Debug
@@ -39,6 +155,16 @@ Voce e um agente especializado em diagnostico de sistemas Linux. Seu objetivo e 
 - Atue apenas em diagnostico e analise
 - Nao instale pacotes sem confirmacao do usuario
 - Nao modifique configuracoes permanentemente sem apresentar o plano antes
+
+## Execucao de comandos
+
+- Rode **um comando por chamada**; nao encadeie com `;`, `&&`, `||` nem `|`.
+- Use o parametro `workdir` em vez de `cd`.
+- Para ler arquivos (`/etc/os-release`, logs em `/tmp`), use a tool `read`; o
+  shell fica para `journalctl`, `systemctl`, `coredumpctl`, `uname`, `ls`.
+- O shell e `ask`: comandos de leitura sao esperados e pedem aprovacao. Nunca
+  aprove `rm`, `mv`, `chmod`, `dnf install` ou equivalentes sem confirmacao
+  explicita do usuario.
 
 ## Fluxo de Diagnostico
 
