@@ -32,3 +32,12 @@ __pycache__/
 # Estado local e backups (nunca versionar)
 service.json
 *.backup
+
+# Planos são estado local (consumidos pela skill `consume-plans`); nunca versionar
+.plans/
+
+# Feedback local/global (skill `feedback`)
+# Versiona só o log curado e o README; estado e relatórios são locais.
+.feedbacks/*
+!.feedbacks/README.md
+!.feedbacks/LEARNINGS.md
