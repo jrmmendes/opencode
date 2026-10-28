@@ -17,204 +17,45 @@ The database is opened with `mode=ro`; this script never writes to it.
 
 import argparse
 import json
-import sqlite3
 import sys
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
 from pathlib import Path
-from urllib.request import pathname2url
 
-INVESTIGATION = {"read", "grep", "glob", "list", "shell", "webfetch", "websearch"}
-BUILTINS = {
-    "read", "write", "edit", "patch", "glob", "grep",
-    "shell", "subagent", "question", "skill", "webfetch", "websearch", "execute", "browser",
-}
-TOOL_ALIASES = {"bash": "shell", "task": "subagent"}
-SUBAGENT_KEYS = ("agent", "subagent_type")
-DEFAULT_DB = "~/.local/share/opencode/opencode.db"
+# Shared core lives in the `feedback` skill (global, available in every project).
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "feedback" / "scripts"))
 
+import session_core as core  # noqa: E402
 
-def tables(con):
-    return {r[0] for r in con.execute("select name from sqlite_master where type='table'")}
+INVESTIGATION = core.INVESTIGATION
+BUILTINS = core.BUILTINS
+SUBAGENT_KEYS = core.SUBAGENT_KEYS
+DEFAULT_DB = core.DEFAULT_DB
 
-
-def normalize_tool(name):
-    return TOOL_ALIASES.get(name or "?", name or "?")
-
-
-def agent_matches(value, target):
-    """V2 stores the agent ID; V1 stored the display name (e.g. Build:harness)."""
-    if not value or not target:
-        return False
-    value, target = value.strip().lower(), target.strip().lower()
-    return value == target or value.split(":")[-1] == target.split(":")[-1]
-
-
-def fmt_ts(ms):
-    if not ms:
-        return "-"
-    return datetime.fromtimestamp(ms / 1000, tz=timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M")
+fmt_ts = core.fmt_ts
+pct = core.pct
+error_kind = core.error_kind
+cmd_prefix = core.cmd_prefix
+mcp_prefix = core.mcp_prefix
 
 
 def connect(db):
-    path = Path(db).expanduser()
-    if not path.exists():
+    """Preserve the historical error message and exit code of this CLI."""
+    try:
+        return core.connect(db)
+    except core.DatabaseMissing:
         sys.exit(f"database not found: {db}")
-    con = sqlite3.connect(f"file:{pathname2url(str(path))}?mode=ro", uri=True, timeout=30)
-    con.row_factory = sqlite3.Row
-    return con
-
-
-def chunks(items, size=500):
-    for i in range(0, len(items), size):
-        yield items[i : i + size]
 
 
 def load_sessions(con, agent):
-    known = tables(con)
-    rows = []
-    if "session_v2" in known:
-        rows += [
-            dict(r)
-            for r in con.execute(
-                "select s.id, s.parent_id, s.title, s.time_created, "
-                "coalesce(s.agent, ("
-                "  select json_extract(m.data,'$.agent') from session_message m "
-                "  where m.session_id = s.id and m.type = 'assistant' "
-                "  and json_extract(m.data,'$.agent') is not null "
-                "  order by m.time_created limit 1)) as agent "
-                "from session_v2 s order by s.time_created"
-            )
-        ]
-    if "session" in known:
-        rows += [
-            dict(r)
-            for r in con.execute(
-                "select id, parent_id, title, time_created, agent from session order by time_created"
-            )
-        ]
-    seen = set()
-    unique = []
-    for row in rows:
-        if row["id"] in seen:
-            continue
-        seen.add(row["id"])
-        if agent_matches(row.get("agent"), agent):
-            unique.append(row)
-    unique.sort(key=lambda r: r["time_created"] or 0)
-    return unique
+    return core.load_sessions(con, agent)
 
 
 def load_tool_parts(con, session_ids):
-    known = tables(con)
-    parts = []
-    for group in chunks(session_ids):
-        marks = ",".join("?" * len(group))
-        if "session_message" in known:
-            rows = con.execute(
-                f"select session_id, time_created, data from session_message "
-                f"where session_id in ({marks}) and type = 'assistant' order by time_created",
-                group,
-            )
-            for sid, ts, data in rows:
-                try:
-                    payload = json.loads(data)
-                except (TypeError, ValueError):
-                    continue
-                for item in payload.get("content") or []:
-                    if not isinstance(item, dict) or item.get("type") != "tool":
-                        continue
-                    state = item.get("state") or {}
-                    parts.append(
-                        {
-                            "session": sid,
-                            "ts": ts,
-                            "tool": normalize_tool(item.get("name")),
-                            "status": state.get("status") or "unknown",
-                            "input": state.get("input") or {},
-                            "error": state.get("error"),
-                        }
-                    )
-        if "part" in known:
-            rows = con.execute(
-                f"select session_id, time_created, data from part "
-                f"where session_id in ({marks}) and json_extract(data,'$.type') = 'tool' "
-                f"order by time_created",
-                group,
-            )
-            for sid, ts, data in rows:
-                try:
-                    payload = json.loads(data)
-                except (TypeError, ValueError):
-                    continue
-                state = payload.get("state") or {}
-                parts.append(
-                    {
-                        "session": sid,
-                        "ts": ts,
-                        "tool": normalize_tool(payload.get("tool")),
-                        "status": state.get("status") or "unknown",
-                        "input": state.get("input") or {},
-                        "error": state.get("error"),
-                    }
-                )
-    parts.sort(key=lambda p: p["ts"] or 0)
-    return parts
+    return core.load_tool_parts(con, session_ids)
 
 
 def load_children(con, session_ids):
-    known = tables(con)
-    counter = Counter()
-    for group in chunks(session_ids):
-        marks = ",".join("?" * len(group))
-        for table in ("session_v2", "session"):
-            if table not in known:
-                continue
-            rows = con.execute(
-                f"select agent, count(*) from {table} where parent_id in ({marks}) group by agent",
-                group,
-            )
-            for agent, n in rows:
-                counter[agent or "(none)"] += n
-    return counter
-
-
-def error_kind(error, tool):
-    if not error:
-        return "(sem mensagem)"
-    text = error if isinstance(error, str) else json.dumps(error, ensure_ascii=False)
-    low = text.lower()
-    if "prevents you from using" in low or ("permission" in low and "deny" in low):
-        return "permission denied"
-    if "rejected" in low:
-        return "user rejected"
-    if "dismissed" in low:
-        return "user dismissed"
-    if "aborted" in low:
-        return "aborted"
-    return " ".join(text.split())[:120]
-
-
-def cmd_prefix(command):
-    tokens = (command or "").split()
-    if not tokens:
-        return "?"
-    if tokens[0] == "git" and len(tokens) > 1:
-        return f"git {tokens[1]}"
-    return tokens[0]
-
-
-def mcp_prefix(tool):
-    if tool in BUILTINS:
-        return None
-    for server in ("playwright", "open-design", "rea"):
-        if tool.startswith(server + "_"):
-            return server
-    return tool.split("_", 1)[0] if "_" in tool else None
-
-
-def pct(part, whole):
-    return f"{part / whole * 100:.1f}%" if whole else "-"
+    return core.load_children(con, session_ids)
 
 
 def build_report(agent, sessions, parts, children, min_repeats, top):
