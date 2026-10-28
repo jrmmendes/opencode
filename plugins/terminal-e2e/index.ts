@@ -48,6 +48,10 @@ const DESCRIPTION = [
   "Example (open a tmux command palette after a 1.2s settle):",
   '  command: ["tmux","-L","t","attach","-t","smoke"],',
   '  steps: [{ send: "C-a f", waitMs: 2500 }]',
+  "",
+  "Output is the final screen, not the raw stream: ANSI is rendered (\\r, \\b,",
+  "ESC[K/J, cursor moves, scroll regions, alternate screen), so a redrawing TUI",
+  "yields ~1 line per visual line. Use `raw: true` for the raw bytes with ANSI.",
 ].join("\n")
 
 // --- permission resources -----------------------------------------------------
@@ -528,7 +532,14 @@ export default Plugin.define({
             }
           }
 
-          let parsed: { exitCode?: number | null; timedOut?: boolean; bytes?: number; output?: string }
+          let parsed: {
+            exitCode?: number | null
+            timedOut?: boolean
+            bytes?: number
+            renderedBytes?: number
+            raw?: boolean
+            output?: string
+          }
           try {
             parsed = JSON.parse(res.stdout)
           } catch (err) {
@@ -556,6 +567,10 @@ export default Plugin.define({
               exitCode: parsed.exitCode ?? null,
               timedOut,
               bytes: parsed.bytes ?? 0,
+              // Raw pty capture vs. the rendered (raw: false) text size: the gap
+              // is the redraw noise the VT render collapsed.
+              renderedBytes: parsed.renderedBytes ?? null,
+              raw: parsed.raw ?? false,
               killedByHost: res.killedByHost,
               aborted: res.aborted,
             },
