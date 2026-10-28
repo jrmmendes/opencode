@@ -97,6 +97,9 @@ permissions:
   - action: rea_*
     resource: "*"
     effect: deny
+  - action: TerminalE2E
+    resource: "*"
+    effect: deny
 ---
 
 # Orquestrador
